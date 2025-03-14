@@ -1,0 +1,26 @@
+appId: ${APP_ID}
+---
+# Executa o script de elementos baseado na plataforma
+- runFlow:
+    when:
+        platform: Android
+    commands:
+        - runScript:
+            file: android-elements/login.js
+- runFlow:
+    when:
+        platform: iOS
+    commands:
+        - runScript:
+            file: ios-elements/login.js
+# Teste de login para ambas as plataformas
+- launchApp
+- tapOn:
+    id: ${output.login.email}
+- inputText: teste@teste.com
+- tapOn:
+    id: ${output.login.password}
+- inputText: 123456
+- tapOn:
+    id: ${output.login.loginBtn}
+- tapOn: ${output.login.addressSelection}

@@ -1,0 +1,37 @@
+name: Executando os testes no Device Farm Robin do Maestro
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout do repositório
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v3
+
+      # Baixar e instalar o Maestro
+      - name: Install Maestro
+        id: install-maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      # Exportar chave API e Project ID do Maestro
+      - name: Set Environment Variables
+        id: set-env
+        run: |
+          echo "MAESTRO_API_KEY=${{ secrets.MAESTRO_API_KEY }}" >> $GITHUB_ENV
+          echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> $GITHUB_ENV
+
+      # Rodar testes usando o Maestro
+      - name: Run Maestro Tests
+        id: run-tests
+        run: |
+          maestro cloud --apiKey $MAESTRO_API_KEY --project-id $PROJECT_ID qazandoqafood.apk .maestro/
